@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Callback - Promise - Async/Await</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <!--
+        -->
+            <script type="text/javascript" src="/callback.js"></script>
+            <script type="text/javascript" src="/promise.js"></script>
+            <script type="text/javascript" src="/asyncawait.js"></script>
+
+    </head>
+    <body>
+        <h1>Evolution of controlling flow of asynchronous code in JavaScript</h1>
+        <h2>From callback - promise (ES2015) - async/await (ES2017)</h2>
+        <hr />
+
+        <div class="container-fluid">
+            <div class="row">
+                  
+                <div class="col-sm-4">
+                    <h3>Callback functions </h3>
+    
+                    <p> We define our method and call the callback  once we are done with our logic</p>
+                    <code> var simpleCallback = function( passedNumber, callback){</code> <br/>
+                    <code><span class='codeIndent'> console.log("[cSimple-Main] we will call the callback function (which is part of the caller definition) now");</span></code> <br/>
+                    <code><span class='codeIndent'> <b>callback(null,"success-from-the-function");</b></span></code> <br/>
+                    <code> };</code> <br/>
+                    <hr/>
+                    
+                    <p> If we create defined the logic of the callback inside the caller, we can do that </p>
+                    <code>simpleCallback(7,function(errVal, dataVal){</code> <br/>
+                    <code><span class='codeIndent'> console.log("[cSimple-callback] we are inside the callback function...");</span></code> <br/>
+                    <code><span class='codeIndent'> if (errVal) {</span></code> <br/>
+                    <code><span class='codeIndent'> console.log("[cSimple-callback] we got an error...");</span></code> <br/>
+                    <code><span class='codeIndent'> } else {</span></code> <br/>
+                    <code><span class='codeIndent'> console.log("[cSimple-callback] we got an value: " + dataVal);</span></code> <br/>
+                    <code><span class='codeIndent'> }</span></code> <br/>
+                    <code>}); </code>
+            
+                    <hr/>
+                    <p> Or we can separately define the callback function...</p>
+                    <code>var callbackMethodDefinitionWithValues = function(errVal2, dataVal2){</code><br/>
+                        <code><span class='codeIndent'></span>console.log("[cExplicit-Val-callback] we are inside the explicitly defined callback function...");</span></code><br/>
+                        <code><span class='codeIndent'></span>if (errVal2) {</span></code><br/>
+                            <code><span class='codeIndent'></span>console.log("[cExplicit-Val-callback] we got an error...");</code></span><br/>
+                            <code><span class='codeIndent'>} else {</span></code><br/>
+                            <code><span class='codeIndent'></span>console.log("[cExplicit-Val-callback] we got an value: " + dataVal2);</span></code><br/>
+                            <code><span class='codeIndent'>}</span></code><br/>
+                        <code>};</code><br/>
+                    
+                        <p>...And call it later...</p>
+                        <code>    setTimeout(function(){ </code><br/>
+                            <code><span class='codeIndent'></span>explicitCallbackWithValues(27, <b>callbackMethodDefinitionWithValues</b>);</span></code><br/>
+                        <code> }, 6000);</code><br/>
+            
+                    <div id='callbackLog'></div>
+                </div>
+
+                <div class="col-sm-4">
+                    <h3>creating a promise function</h3>
+
+                    <p> If we create a promise function <br/><code>var promiseFunction = new Promise( function (resolve, reject) { <br/>  </code>
+                    <code><span class='codeIndent'> resolve(value)</span></code> ...in case of success <br/>
+                    <code><span class='codeIndent'> reject(value)</span></code> ...in case of error <br/>
+                    <code> }; </code> <br/>
+                    <hr/>
+                        Since we called a promise function, we have to use <br/> <code>promiseFunction<br/>
+                            .then(function(valFromPromise){<br/>
+                            <span class='codeIndent'> //Do what we want with the valFromPromise </span> <br/> 
+                        });</code><br/>
+                        Once the promise returns, the then functions will run asynchronously... but they will wait for the primary promise to resolve.</p>
+                        <hr/>
+                        To chain multiple items in the promise, we have to <br/> <code>promiseFunction<br/>
+                            .then(function(valFromPromise){<br/>
+                                <span class='codeIndent'> //Do what we want with the valFromPromise </span><br/>
+                                    <span class='codeIndent'> <b>return someValueFromFirstThen</b></span>
+                        }) <br/>
+                        .then(function(someValueFromFirstThen){<br/>
+                            <span class='codeIndent'> //Do what we want with the someValueFromFirstThen</span> <br/>
+                        });
+                    </code><br/>
+                        Once the promise returns, the then functions will run asynchronously... but they will wait for the primary promise to resolve.
+                    </p>
+            
+                    <div id='promiseLog'></div>
+                </div>
+                 
+                <div class="col-sm-4">
+                    <h3>Async await functions </h3>
+    
+                    <p> We define our method which returns a promise like we <u>normally do</u> </p>
+                    
+                    <code> var simplePromiseFunction = function(passedNumber){</code> <br/>
+                    <code> <span class='codeIndent'>console.log("[aaSimple-Main] inside simplePromiseFunction... you passed: " + passedNumber); </span></code> <br/>
+                    <code> <span class='codeIndent'> var returnedNum = passedNumber*10; </span></code> <br/>
+                    <code> <span class='codeIndent'> var resultval = "returned promise: " + returnedNum; </span></code> <br/>
+                    <code> <span class='codeIndent'> return <b>Promise.resolve(resultval);</b> </span></code> <br/>
+                    <code> }; </code> <br/>
+            
+                    <hr/>
+                    
+                    <p> The new part is here... </p>
+                    <code> <mark> async</mark> function simplePromiseFunctionCaller(){</code> <br/>
+                    <code><span class='codeIndent'> <mark>const</mark>  simplePromiseFunctionCaller = <mark> await</mark>  simplePromiseFunction(3);</span> </code> <br/>
+                    <code><span class='codeIndent'> console.log("[aaSimple-caller] we got the calculated value of:" + simplePromiseFunctionCaller);</span> </code> <br/>
+                    <code><span class='codeIndent'> }</span></code> <br/>
+                    <code>}); </code> <br/>
+                        
+                    <p> Finally we call our async function 
+                    </p>
+                    <code>simplePromiseFunctionCaller();</code> <br/><br/>
+                    
+                    <div id='aaLog1'></div>
+                    <div id='aaLog'></div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+    <style type='text/css'>
+
+        code{color:fuchsia;}
+        code b{color:navy;}
+        .codeIndent { padding-left:20px;}
+        
+        #callbackLog, #aaLog, #promiseLog {border:1px dotted turquoise; padding:2px 5px;}
+        #callbackLog{background: lightpink;}
+        #aaLog{background: lightgreen;}
+        #promiseLog{background: lightyellow;}
+
+        .row div:nth-child(1) {background:#e6e6e6;}
+        .row div:nth-child(2) {background:antiquewhite;}
+        .row div:nth-child(3) {background:#d9f0ff;}
+
+    </style>
+
+</html>
